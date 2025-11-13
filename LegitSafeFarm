@@ -1,1 +1,683 @@
-
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local player = Players.LocalPlayer
+local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+local SafeNames = {
+"MediumSafe_HO_26","MediumSafe_HO_39","MediumSafe_HO_45","MediumSafe_SEW_42",
+"MediumSafe_SEW_46","MediumSafe_SU_32","MediumSafe_SW_44","MediumSafe_TS_20",
+"MediumSafe_T_21","MediumSafe_T_38","MediumSafe_VC_24","MediumSafe_VC_47",
+"MediumSafe_VC_9","SmallSafe_BD_12","SmallSafe_BD_18","SmallSafe_C_3",
+"SmallSafe_FA_34","SmallSafe_FA_35","SmallSafe_FA_36","SmallSafe_HO_37",
+"SmallSafe_M_17","SmallSafe_SU_15","SmallSafe_SU_22","SmallSafe_SW_41",
+"SmallSafe_SW_43","SmallSafe_TO_11","SmallSafe_TO_2","SmallSafe_TO_8",
+"SmallSafe_WH_28"
+}
+local RegisterNames = {
+"Register_BS_30","Register_B_10","Register_B_19","Register_B_33",
+"Register_B_40","Register_B_7","Register_C_1","Register_GS_16",
+"Register_HO_23","Register_M_25","Register_M_31","Register_M_5",
+"Register_M_6","Register_P_13","Register_P_14","Register_TS_27",
+"Register_TS_4","Register_VI_29"
+}
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "SafeESPGui"
+screenGui.Parent = player.PlayerGui
+screenGui.ResetOnSpawn = false
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0,250,0,265)
+mainFrame.Position = UDim2.new(0,10,0,10)
+mainFrame.BackgroundColor3 = Color3.fromRGB(40,40,40)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0,8)
+corner.Parent = mainFrame
+local titleBar = Instance.new("Frame")
+titleBar.Size = UDim2.new(1,0,0,30)
+titleBar.BackgroundColor3 = Color3.fromRGB(30,30,30)
+titleBar.BorderSizePixel = 0
+titleBar.Parent = mainFrame
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0,8)
+titleCorner.Parent = titleBar
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1,-30,1,0)
+titleLabel.Position = UDim2.new(0,10,0,0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Safe ESP v2.1 by bestik_"
+titleLabel.TextColor3 = Color3.fromRGB(255,255,255)
+titleLabel.TextSize = 14
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.Parent = titleBar
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0,20,0,20)
+closeButton.Position = UDim2.new(1,-25,0,5)
+closeButton.BackgroundColor3 = Color3.fromRGB(255,60,60)
+closeButton.BorderSizePixel = 0
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.fromRGB(255,255,255)
+closeButton.TextSize = 12
+closeButton.Font = Enum.Font.GothamBold
+closeButton.Parent = titleBar
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0,4)
+closeCorner.Parent = closeButton
+local contentFrame = Instance.new("Frame")
+contentFrame.Size = UDim2.new(1,-20,1,-40)
+contentFrame.Position = UDim2.new(0,10,0,35)
+contentFrame.BackgroundTransparency = 1
+contentFrame.Parent = mainFrame
+local enableEspButton = Instance.new("TextButton")
+enableEspButton.Size = UDim2.new(1,0,0,30)
+enableEspButton.Position = UDim2.new(0,0,0,0)
+enableEspButton.BackgroundColor3 = Color3.fromRGB(60,60,60)
+enableEspButton.BorderSizePixel = 0
+enableEspButton.Text = "ВКЛЮЧИТЬ ESP"
+enableEspButton.TextColor3 = Color3.fromRGB(255,255,255)
+enableEspButton.TextSize = 14
+enableEspButton.Font = Enum.Font.Gotham
+enableEspButton.Parent = contentFrame
+local enableCorner = Instance.new("UICorner")
+enableCorner.CornerRadius = UDim.new(0,6)
+enableCorner.Parent = enableEspButton
+local disableEspButton = Instance.new("TextButton")
+disableEspButton.Size = UDim2.new(1,0,0,30)
+disableEspButton.Position = UDim2.new(0,0,0,35)
+disableEspButton.BackgroundColor3 = Color3.fromRGB(60,60,60)
+disableEspButton.BorderSizePixel = 0
+disableEspButton.Text = "ОТКЛЮЧИТЬ ESP"
+disableEspButton.TextColor3 = Color3.fromRGB(255,255,255)
+disableEspButton.TextSize = 14
+disableEspButton.Font = Enum.Font.Gotham
+disableEspButton.Parent = contentFrame
+local disableCorner = Instance.new("UICorner")
+disableCorner.CornerRadius = UDim.new(0,6)
+disableCorner.Parent = disableEspButton
+local flyButton = Instance.new("TextButton")
+flyButton.Size = UDim2.new(1,0,0,30)
+flyButton.Position = UDim2.new(0,0,0,70)
+flyButton.BackgroundColor3 = Color3.fromRGB(255,60,60)
+flyButton.BorderSizePixel = 0
+flyButton.Text = "Fly Z: OFF"
+flyButton.TextColor3 = Color3.fromRGB(255,255,255)
+flyButton.TextSize = 14
+flyButton.Font = Enum.Font.Gotham
+flyButton.Parent = contentFrame
+local flyCorner = Instance.new("UICorner")
+flyCorner.CornerRadius = UDim.new(0,6)
+flyCorner.Parent = flyButton
+local invisButton = Instance.new("TextButton")
+invisButton.Size = UDim2.new(1,0,0,30)
+invisButton.Position = UDim2.new(0,0,0,105)
+invisButton.BackgroundColor3 = Color3.fromRGB(255,60,60)
+invisButton.BorderSizePixel = 0
+invisButton.Text = "Invisible T: OFF"
+invisButton.TextColor3 = Color3.fromRGB(255,255,255)
+invisButton.TextSize = 14
+invisButton.Font = Enum.Font.Gotham
+invisButton.Parent = contentFrame
+local invisCorner = Instance.new("UICorner")
+invisCorner.CornerRadius = UDim.new(0,6)
+invisCorner.Parent = invisButton
+local infStaminaButton = Instance.new("TextButton")
+infStaminaButton.Size = UDim2.new(1,0,0,30)
+infStaminaButton.Position = UDim2.new(0,0,0,140)
+infStaminaButton.BackgroundColor3 = Color3.fromRGB(255,60,60)
+infStaminaButton.BorderSizePixel = 0
+infStaminaButton.Text = "INF STAMINA: OFF"
+infStaminaButton.TextColor3 = Color3.fromRGB(255,255,255)
+infStaminaButton.TextSize = 14
+infStaminaButton.Font = Enum.Font.Gotham
+infStaminaButton.Parent = contentFrame
+local infStaminaCorner = Instance.new("UICorner")
+infStaminaCorner.CornerRadius = UDim.new(0,6)
+infStaminaCorner.Parent = infStaminaButton
+local lockpickScaleButton = Instance.new("TextButton")
+lockpickScaleButton.Size = UDim2.new(1,0,0,30)
+lockpickScaleButton.Position = UDim2.new(0,0,0,175)
+lockpickScaleButton.BackgroundColor3 = Color3.fromRGB(255,60,60)
+lockpickScaleButton.BorderSizePixel = 0
+lockpickScaleButton.Text = "LOCKPICK SCALE: OFF"
+lockpickScaleButton.TextColor3 = Color3.fromRGB(255,255,255)
+lockpickScaleButton.TextSize = 14
+lockpickScaleButton.Font = Enum.Font.Gotham
+lockpickScaleButton.Parent = contentFrame
+local lockpickScaleCornerBtn = Instance.new("UICorner")
+lockpickScaleCornerBtn.CornerRadius = UDim.new(0,6)
+lockpickScaleCornerBtn.Parent = lockpickScaleButton
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Size = UDim2.new(1,0,0,25)
+statusLabel.Position = UDim2.new(0,0,0,210)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Text = "Статус: Выключен"
+statusLabel.TextColor3 = Color3.fromRGB(255,100,100)
+statusLabel.TextSize = 12
+statusLabel.Font = Enum.Font.Gotham
+statusLabel.Parent = contentFrame
+local isEspEnabled = false
+local isFlyEnabled = false
+local isInvisEnabled = false
+local isInfStaminaEnabled = false
+local isLockpickScaleEnabled = false
+local safeHighlights = {}
+local safeBillboards = {}
+local safeResetTimers = {}
+local safeFrozenPositions = {}
+local registerHighlights = {}
+local registerBillboards = {}
+local registerResetTimers = {}
+local espCoroutine = nil
+local lastUpdateTime = tick()
+local flyEnabled = false
+local flySpeed = 2
+local flyBind = Enum.KeyCode.Z
+local flyInputConn = nil
+local flyRenderConn = nil
+local function handleFly()
+	flyInputConn = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+		if not gameProcessed and input.KeyCode == flyBind then
+			flyEnabled = not flyEnabled
+			flyButton.Text = flyEnabled and "Fly Z: ON" or "Fly Z: OFF"
+			flyButton.BackgroundColor3 = flyEnabled and Color3.fromRGB(100,255,100) or Color3.fromRGB(255,60,60)
+		end
+	end)
+	flyRenderConn = RunService.RenderStepped:Connect(function(deltaTime)
+		if flyEnabled then
+			local character = player.Character
+			if not character then return end
+			local rootPart = character:FindFirstChild("HumanoidRootPart")
+			if not rootPart then return end
+			local camera = workspace.CurrentCamera
+			local moveDirection = Vector3.new(0,0,0)
+			if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDirection += camera.CFrame.LookVector end
+			if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDirection -= camera.CFrame.LookVector end
+			if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDirection -= camera.CFrame.RightVector end
+			if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDirection += camera.CFrame.RightVector end
+			if UserInputService:IsKeyDown(Enum.KeyCode.Space) then moveDirection += Vector3.new(0,1,0) end
+			if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then moveDirection -= Vector3.new(0,1,0) end
+			if moveDirection.Magnitude > 0 then
+				moveDirection = moveDirection.Unit
+				rootPart.CFrame = rootPart.CFrame + (moveDirection * flySpeed)
+			end
+		end
+	end)
+end
+handleFly()
+local InvisEnabled = false
+local InvisBind = Enum.KeyCode.T
+local Character = player.Character or player.CharacterAdded:Wait()
+local Humanoid = Character:FindFirstChildOfClass("Humanoid")
+local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+local AnimationTrack = nil
+local CamoAnim = Instance.new("Animation")
+CamoAnim.AnimationId = "rbxassetid://215384594"
+local WarningGUI = Instance.new("ScreenGui")
+WarningGUI.Name = "InvisibilityWarning"
+WarningGUI.Parent = game:GetService("CoreGui")
+WarningGUI.ResetOnSpawn = false
+local WarningLabel = Instance.new("TextLabel")
+WarningLabel.Text = "Тебя видно ишак"
+WarningLabel.Visible = false
+WarningLabel.Size = UDim2.new(0,300,0,40)
+WarningLabel.Position = UDim2.new(0.5,-150,0.85,0)
+WarningLabel.BackgroundTransparency = 1
+WarningLabel.Font = Enum.Font.GothamBold
+WarningLabel.TextSize = 26
+WarningLabel.TextColor3 = Color3.fromRGB(255,0,0)
+WarningLabel.TextStrokeTransparency = 0.5
+WarningLabel.ZIndex = 10
+WarningLabel.Parent = WarningGUI
+local invisInputConn = nil
+local invisHeartbeatConn = nil
+local function CheckR6()
+	return Character:FindFirstChild("Torso") ~= nil
+end
+local function LoadAnimationTrack()
+	if AnimationTrack then pcall(function() AnimationTrack:Stop() end) AnimationTrack = nil end
+	if Humanoid then
+		local success, result = pcall(function() return Humanoid:LoadAnimation(CamoAnim) end)
+		if success then
+			AnimationTrack = result
+			AnimationTrack.Priority = Enum.AnimationPriority.Action4
+		end
+	end
+end
+local function IsGrounded()
+	return Humanoid and Humanoid:IsDescendantOf(workspace) and Humanoid.FloorMaterial ~= Enum.Material.Air
+end
+local function DisableInvisibility()
+	if not InvisEnabled then return end
+	InvisEnabled = false
+	if AnimationTrack then pcall(function() AnimationTrack:Stop() end) end
+	if Humanoid then workspace.CurrentCamera.CameraSubject = Humanoid end
+	if Character then
+		for _, part in pairs(Character:GetDescendants()) do
+			if part:IsA("BasePart") and part.Transparency == 0.5 then
+				part.Transparency = 0
+			end
+		end
+	end
+	WarningLabel.Visible = false
+	invisButton.Text = "Invisible T: OFF"
+	invisButton.BackgroundColor3 = Color3.fromRGB(255,60,60)
+end
+local function EnableInvisibility()
+	if InvisEnabled or not CheckR6() then return end
+	Character = player.Character
+	Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
+	HumanoidRootPart = Character and Character:FindFirstChild("HumanoidRootPart")
+	if not Character or not Humanoid or not HumanoidRootPart then return end
+	InvisEnabled = true
+	workspace.CurrentCamera.CameraSubject = HumanoidRootPart
+	LoadAnimationTrack()
+	invisButton.Text = "Invisible T: ON"
+	invisButton.BackgroundColor3 = Color3.fromRGB(100,255,100)
+end
+local function InvisibilityStep(deltaTime)
+	if not InvisEnabled or not Character or not Humanoid or not HumanoidRootPart then return end
+	WarningLabel.Visible = not IsGrounded()
+	local walkSpeed = 12
+	if Humanoid.MoveDirection.Magnitude > 0 then
+		local velocityOffset = Humanoid.MoveDirection * walkSpeed * deltaTime
+		HumanoidRootPart.CFrame += velocityOffset
+	end
+	local originalCFrame = HumanoidRootPart.CFrame
+	local originalCameraOffset = Humanoid.CameraOffset
+	local _, yawAngle = workspace.CurrentCamera.CFrame:ToOrientation()
+	HumanoidRootPart.CFrame = CFrame.new(HumanoidRootPart.Position) * CFrame.fromOrientation(0,yawAngle,0)
+	HumanoidRootPart.CFrame *= CFrame.Angles(math.rad(90),0,0)
+	Humanoid.CameraOffset = Vector3.new(0,1.44,0)
+	if AnimationTrack then
+		pcall(function()
+			if not AnimationTrack.IsPlaying then AnimationTrack:Play() end
+			AnimationTrack:AdjustSpeed(0)
+			AnimationTrack.TimePosition = 0.3
+		end)
+	end
+	if Humanoid and Humanoid:IsDescendantOf(workspace) then Humanoid.CameraOffset = originalCameraOffset end
+	if HumanoidRootPart and HumanoidRootPart:IsDescendantOf(workspace) then HumanoidRootPart.CFrame = originalCFrame end
+	if AnimationTrack then pcall(function() AnimationTrack:Stop() end) end
+	if HumanoidRootPart and HumanoidRootPart:IsDescendantOf(workspace) then
+		local lookVector = workspace.CurrentCamera.CFrame.LookVector
+		local flatLook = Vector3.new(lookVector.X,0,lookVector.Z).Unit
+		if flatLook.Magnitude > 0.1 then
+			local targetCFrame = CFrame.new(HumanoidRootPart.Position, HumanoidRootPart.Position + flatLook)
+			HumanoidRootPart.CFrame = targetCFrame
+		end
+	end
+	if Character then
+		for _, part in pairs(Character:GetDescendants()) do
+			if part:IsA("BasePart") and part.Transparency ~= 1 then
+				part.Transparency = 0.5
+			end
+		end
+	end
+end
+local function setupInvis()
+	invisInputConn = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+		if gameProcessed then return end
+		if input.KeyCode == InvisBind then
+			if InvisEnabled then DisableInvisibility() else EnableInvisibility() end
+		end
+	end)
+	invisHeartbeatConn = RunService.Heartbeat:Connect(function(deltaTime)
+		if not InvisEnabled then
+			if Character then
+				for _, part in pairs(Character:GetDescendants()) do
+					if part:IsA("BasePart") and part.Transparency == 0.5 then
+						part.Transparency = 0
+					end
+				end
+			end
+			WarningLabel.Visible = false
+			return
+		end
+		InvisibilityStep(deltaTime)
+	end)
+end
+setupInvis()
+player.CharacterAdded:Connect(function(newCharacter)
+	DisableInvisibility()
+	if AnimationTrack then pcall(function() AnimationTrack:Stop() end) AnimationTrack = nil end
+	task.wait(0.5)
+	Character = newCharacter
+	Humanoid = Character:WaitForChild("Humanoid")
+	HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+	if InvisEnabled then EnableInvisibility() end
+end)
+player.CharacterRemoving:Connect(function()
+	if AnimationTrack then pcall(function() AnimationTrack:Stop() end) AnimationTrack = nil end
+	WarningLabel.Visible = false
+end)
+if not CheckR6() then
+	warn("Invisibility requires R6 character!")
+	game:GetService("StarterGui"):SetCore("SendNotification",{
+		Title = "Invisibility Error",
+		Text = "This feature requires R6 avatar.",
+		Duration = 5,
+	})
+end
+local infStaminaConnection = nil
+local function setupInfStamina()
+	infStaminaConnection = RunService.RenderStepped:Connect(function()
+		if isInfStaminaEnabled then
+			local char = player.Character
+			if not char then return end
+			local hum = char:FindFirstChildOfClass("Humanoid")
+			if hum and not hum:GetAttribute("ZSPRN_M") then
+				hum:SetAttribute("ZSPRN_M",true)
+			end
+		end
+	end)
+end
+local function disableInfStamina()
+	if infStaminaConnection then infStaminaConnection:Disconnect() infStaminaConnection = nil end
+	local char = player.Character
+	if char then
+		local hum = char:FindFirstChildOfClass("Humanoid")
+		if hum then hum:SetAttribute("ZSPRN_M",nil) end
+	end
+end
+local lockpickConnection = nil
+local function setupLockpickScale()
+	if lockpickConnection then return end
+	lockpickConnection = RunService.Heartbeat:Connect(function()
+		if not isLockpickScaleEnabled then return end
+		local gui = player.PlayerGui:FindFirstChild("LockpickGUI")
+		if not gui then return end
+		local mf = gui:FindFirstChild("MF")
+		if not mf then return end
+		local lpFrame = mf:FindFirstChild("LP_Frame")
+		if not lpFrame then return end
+		local frames = lpFrame:FindFirstChild("Frames")
+		if not frames then return end
+		for _, barName in {"B1","B2","B3"} do
+			local b = frames:FindFirstChild(barName)
+			if b then
+				local bar = b:FindFirstChild("Bar")
+				if bar then
+					local uiScale = bar:FindFirstChild("UIScale")
+					if uiScale then uiScale.Scale = 10 end
+				end
+			end
+		end
+	end)
+end
+local function disableLockpickScale()
+	if lockpickConnection then lockpickConnection:Disconnect() lockpickConnection = nil end
+	local gui = player.PlayerGui:FindFirstChild("LockpickGUI")
+	if gui then
+		local mf = gui:FindFirstChild("MF")
+		if mf then
+			local lpFrame = mf:FindFirstChild("LP_Frame")
+			if lpFrame then
+				local frames = lpFrame:FindFirstChild("Frames")
+				if frames then
+					for _, barName in {"B1","B2","B3"} do
+						local b = frames:FindFirstChild(barName)
+						if b then
+							local bar = b:FindFirstChild("Bar")
+							if bar then
+								local uiScale = bar:FindFirstChild("UIScale")
+								if uiScale then uiScale.Scale = 1 end
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+end
+local function createHighlight(obj,objName,isRegister)
+	local highlights = isRegister and registerHighlights or safeHighlights
+	local billboards = isRegister and registerBillboards or safeBillboards
+	if highlights[objName] then highlights[objName]:Destroy() end
+	if billboards[objName] then billboards[objName]:Destroy() end
+	local highlight = Instance.new("Highlight")
+	highlight.Parent = game:GetService("CoreGui")
+	highlight.Adornee = obj
+	highlight.FillTransparency = 0.7
+	highlight.OutlineTransparency = 1
+	highlights[objName] = highlight
+	local billboard = Instance.new("BillboardGui")
+	billboard.Name = isRegister and "RegisterInfo" or "SafeInfo"
+	billboard.Adornee = obj
+	billboard.Size = UDim2.new(0,200,0,60)
+	billboard.StudsOffset = Vector3.new(0,6,0)
+	billboard.AlwaysOnTop = true
+	billboard.Parent = game:GetService("CoreGui")
+	local textLabel = Instance.new("TextLabel")
+	textLabel.Size = UDim2.new(1,0,1,0)
+	textLabel.BackgroundTransparency = 1
+	textLabel.TextColor3 = Color3.fromRGB(255,255,255)
+	textLabel.TextStrokeTransparency = 0
+	textLabel.TextStrokeColor3 = Color3.fromRGB(0,0,0)
+	textLabel.TextSize = 10
+	textLabel.TextScaled = false
+	textLabel.Font = Enum.Font.GothamBold
+	textLabel.Parent = billboard
+	billboards[objName] = billboard
+	obj.AncestryChanged:Connect(function()
+		if not obj:IsDescendantOf(workspace) then
+			if highlights[objName] then highlights[objName].Enabled = false end
+			if billboards[objName] then billboards[objName].Enabled = false end
+		end
+	end)
+end
+local function setupEsp()
+	if espCoroutine then return end
+	local workspace = game:GetService("Workspace")
+	lastUpdateTime = tick()
+	espCoroutine = coroutine.create(function()
+		while isEspEnabled do
+			local delta = tick() - lastUpdateTime
+			lastUpdateTime = tick()
+			for _, safeName in ipairs(SafeNames) do
+				local success, safe = pcall(function()
+					return workspace.Map.BredMakurz:FindFirstChild(safeName)
+				end)
+				if not success or not safe then
+					if safeHighlights[safeName] then safeHighlights[safeName].Enabled = false end
+					if safeBillboards[safeName] then safeBillboards[safeName].Enabled = false end
+					continue
+				end
+				local adornee = safe
+				local skip = false
+				if safeName == "SmallSafe_M_17" then
+					local canHit = safe:FindFirstChild("CanHit")
+					local isOpen = canHit and canHit.Value == true
+					if isOpen then
+						if safeHighlights[safeName] then safeHighlights[safeName].Enabled = false end
+						if safeBillboards[safeName] then safeBillboards[safeName].Enabled = false end
+						skip = true
+					else
+						local mainPart = safe:FindFirstChild("MainPart") or safe
+						if not safeHighlights[safeName] or not safeHighlights[safeName].Parent then
+							createHighlight(mainPart,safeName,false)
+						end
+						if safeHighlights[safeName] then
+							safeHighlights[safeName].Adornee = mainPart
+							safeHighlights[safeName].Enabled = true
+						end
+						local billboard = safeBillboards[safeName]
+						if billboard then
+							billboard.Adornee = mainPart
+							if not safeFrozenPositions[safeName] then
+								billboard.StudsOffset = Vector3.new(0,6,0)
+							end
+							billboard.Enabled = true
+						end
+					end
+				else
+					if not safeHighlights[safeName] or not safeHighlights[safeName].Parent then
+						createHighlight(adornee,safeName,false)
+					end
+					if safeHighlights[safeName] then safeHighlights[safeName].Adornee = adornee end
+				end
+				if skip then continue end
+				local isBroken = false
+				local resetTime = 0
+				pcall(function()
+					local values = safe:FindFirstChild("Values")
+					if values then
+						local broken = values:FindFirstChild("Broken")
+						if broken then isBroken = broken.Value end
+					end
+					if not isBroken then
+						local interact = safe:FindFirstChild("Interact")
+						if interact then isBroken = interact:GetAttribute("Broken") or false end
+					end
+					if isBroken then
+						if not safeResetTimers[safeName] then
+							safeResetTimers[safeName] = 720
+							if safeBillboards[safeName] then safeFrozenPositions[safeName] = safeBillboards[safeName].StudsOffset end
+						else
+							safeResetTimers[safeName] = math.max(safeResetTimers[safeName] - delta,0)
+						end
+						resetTime = safeResetTimers[safeName]
+					else
+						safeResetTimers[safeName] = nil
+						safeFrozenPositions[safeName] = nil
+					end
+				end)
+				local highlight = safeHighlights[safeName]
+				local billboard = safeBillboards[safeName]
+				if highlight and billboard then
+					highlight.FillColor = isBroken and Color3.fromRGB(255,80,80) or Color3.fromRGB(80,255,80)
+					highlight.Enabled = true
+					local minutes = math.floor(resetTime/60)
+					local seconds = math.floor(resetTime%60)
+					local timeText = isBroken and string.format("%d:%02d",minutes,seconds) or ""
+					billboard:FindFirstChild("TextLabel").Text = timeText
+					billboard.Enabled = isBroken
+				end
+			end
+			for _, registerName in ipairs(RegisterNames) do
+				local success, register = pcall(function()
+					return workspace.Map.BredMakurz:FindFirstChild(registerName)
+				end)
+				if not success or not register then
+					if registerHighlights[registerName] then registerHighlights[registerName].Enabled = false end
+					if registerBillboards[registerName] then registerBillboards[registerName].Enabled = false end
+					continue
+				end
+				if not registerHighlights[registerName] or not registerHighlights[registerName].Parent then
+					createHighlight(register,registerName,true)
+				end
+				if registerHighlights[registerName] then registerHighlights[registerName].Adornee = register end
+				local billboard = registerBillboards[registerName]
+				if billboard then
+					billboard.Adornee = register
+					if not safeFrozenPositions[registerName] then
+						billboard.StudsOffset = Vector3.new(0,6,0)
+					end
+				end
+				local isBroken = false
+				local resetTime = 0
+				pcall(function()
+					local values = register:FindFirstChild("Values")
+					if values then
+						local broken = values:FindFirstChild("Broken")
+						if broken then isBroken = broken.Value end
+					end
+					if not isBroken then
+						local interact = register:FindFirstChild("Interact")
+						if interact then isBroken = interact:GetAttribute("Broken") or false end
+					end
+					if isBroken then
+						if not registerResetTimers[registerName] then
+							registerResetTimers[registerName] = 600
+							if billboard then safeFrozenPositions[registerName] = billboard.StudsOffset end
+						end
+						registerResetTimers[registerName] = math.max(registerResetTimers[registerName] - delta,0)
+						resetTime = registerResetTimers[registerName]
+					else
+						registerResetTimers[registerName] = nil
+						safeFrozenPositions[registerName] = nil
+					end
+				end)
+				local highlight = registerHighlights[registerName]
+				if highlight and billboard then
+					highlight.FillColor = isBroken and Color3.fromRGB(255,80,80) or Color3.fromRGB(80,255,80)
+					highlight.Enabled = true
+					local minutes = math.floor(resetTime/60)
+					local seconds = math.floor(resetTime%60)
+					local timeText = isBroken and string.format("%d:%02d",minutes,seconds) or ""
+					billboard:FindFirstChild("TextLabel").Text = timeText
+					billboard.Enabled = isBroken
+				end
+			end
+			task.wait(1)
+		end
+	end)
+	coroutine.resume(espCoroutine)
+end
+local function disableEsp()
+	isEspEnabled = false
+	for _, h in pairs(safeHighlights) do h:Destroy() end
+	for _, b in pairs(safeBillboards) do b:Destroy() end
+	for _, h in pairs(registerHighlights) do h:Destroy() end
+	for _, b in pairs(registerBillboards) do b:Destroy() end
+	safeHighlights = {}
+	safeBillboards = {}
+	safeResetTimers = {}
+	safeFrozenPositions = {}
+	registerHighlights = {}
+	registerBillboards = {}
+	registerResetTimers = {}
+	statusLabel.Text = "Статус: Выключен"
+	statusLabel.TextColor3 = Color3.fromRGB(255,100,100)
+	if espCoroutine then espCoroutine = nil end
+end
+enableEspButton.MouseButton1Click:Connect(function()
+	if not isEspEnabled then
+		isEspEnabled = true
+		setupEsp()
+		statusLabel.Text = "Статус: Включен"
+		statusLabel.TextColor3 = Color3.fromRGB(100,255,100)
+	end
+end)
+disableEspButton.MouseButton1Click:Connect(function()
+	if isEspEnabled then disableEsp() end
+end)
+infStaminaButton.MouseButton1Click:Connect(function()
+	isInfStaminaEnabled = not isInfStaminaEnabled
+	infStaminaButton.Text = isInfStaminaEnabled and "INF STAMINA: ON" or "INF STAMINA: OFF"
+	infStaminaButton.BackgroundColor3 = isInfStaminaEnabled and Color3.fromRGB(100,255,100) or Color3.fromRGB(255,60,60)
+	if isInfStaminaEnabled then setupInfStamina() else disableInfStamina() end
+end)
+lockpickScaleButton.MouseButton1Click:Connect(function()
+	isLockpickScaleEnabled = not isLockpickScaleEnabled
+	lockpickScaleButton.Text = isLockpickScaleEnabled and "LOCKPICK SCALE: ON" or "LOCKPICK SCALE: OFF"
+	lockpickScaleButton.BackgroundColor3 = isLockpickScaleEnabled and Color3.fromRGB(100,255,100) or Color3.fromRGB(255,60,60)
+	if isLockpickScaleEnabled then setupLockpickScale() else disableLockpickScale() end
+end)
+closeButton.MouseButton1Click:Connect(function()
+	disableEsp()
+	flyEnabled = false
+	flyButton.Text = "Fly Z: OFF"
+	flyButton.BackgroundColor3 = Color3.fromRGB(255,60,60)
+	if flyInputConn then flyInputConn:Disconnect() flyInputConn = nil end
+	if flyRenderConn then flyRenderConn:Disconnect() flyRenderConn = nil end
+	DisableInvisibility()
+	if invisInputConn then invisInputConn:Disconnect() invisInputConn = nil end
+	if invisHeartbeatConn then invisHeartbeatConn:Disconnect() invisHeartbeatConn = nil end
+	if isInfStaminaEnabled then disableInfStamina() end
+	if isLockpickScaleEnabled then disableLockpickScale() end
+	screenGui:Destroy()
+end)
+UserInputService.InputBegan:Connect(function(input,gp)
+	if gp then return end
+	if input.KeyCode == Enum.KeyCode.Insert then
+		mainFrame.Visible = not mainFrame.Visible
+	end
+end)
+player.CharacterAdded:Connect(function(char)
+	hrp = char:WaitForChild("HumanoidRootPart")
+end)
